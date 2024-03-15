@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            width: 500px;
+            height:auto;
+            border: 10px solid lightgrey
+        }
+        .shoppingList {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .shoppingListInput {
+            margin-bottom: 10px;
+            margin-top: 20px;
+            position: relative;
+        }
+        .shoppingCart {
+            margin-top:-5px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="app"></div>
+    <script>
+
+        //Model
+        const app = document.getElementById('app');
+        let shoppingListItems = [ 'Milk','Bread','Jam','Butter','Cheese','Yoghurt','Cucumber','Ham'];
+        let shoppingCartItems = [];
+
+        //View
+        updateView();
+        function updateView() {
+            app.innerHTML = /*HTML*/ `
+            <div class="grid">
+            <div class="shoppingList">
+                <h2>Click to add to cart</h2>
+                ${drawShoppingList()}
+                <input class="shoppingListInput" type="text"
+                onchange = "addToShoppingList(this.value)"/>
+            </div>
+                <div class="shoppingCart">
+                    <h2>Shopping cart 🛒</h2>
+                    ${drawShoppingCart()}
+                    </div>
+                </div>
+            `;
+        }
+
+
+        function drawShoppingList () {
+            let html = '';
+            for(let i=0; i < shoppingListItems.length; i++) {
+                html+= `<li onclick="moveToCart('${i}')">${shoppingListItems[i]}</li>`
+            }
+            return html;
+        }
+        function drawShoppingCart(){
+            let html = '';
+            for(let i=0; i < shoppingCartItems.length; i++) {
+                html += `<li onclick="removeFromCart('${i}')">${shoppingCartItems[i]}</li>`
+            }
+            return html;
+        }
+
+        //Controller
+        function addToShoppingList (newItem) {
+            shoppingListItems.push(newItem);
+            updateView();
+        }
+
+        function moveToCart(chosenItem){
+            const itemToMove = shoppingListItems[chosenItem];
+            shoppingListItems.splice(chosenItem, 1);
+            shoppingCartItems.push(itemToMove);
+            updateView();
+        }
+
+        function removeFromCart (chosenItem) {
+            const itemToRemove = shoppingCartItems[chosenItem];
+            shoppingCartItems.splice(itemToRemove, 1);
+            updateView();
+        }
+
+
+
+        //hvordan kan jeg ta i bruk knapper her?
+        // jeg vil gjerne gjøre sånn at hvis man trykker på et eller flere items, så 
+        // blir de markert, og så kan man trykke på knapper som enten fjerner de fra lista,
+        // eller legger de til i cart.
+    </script>
+
+    
+</body>
+</html>

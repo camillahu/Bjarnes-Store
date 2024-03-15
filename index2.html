@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 750px;
+            height: auto;
+            border: 10px solid lightgrey
+        }
+
+        .shoppingList {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .shoppingListInput {
+            margin-bottom: 10px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .shoppingCart {
+            margin-top: -5px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .walletAndReceipt {
+            margin-top: -5px;
+            margin-left: 10px;
+        }
+        .youCanAfford {
+            color:grey;
+        }
+        .youCantAfford{
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app"></div>
+    <script>
+
+        //Model
+        const app = document.getElementById('app');
+        let shoppingListItems = [
+            { name: 'Milk', price: 27 },
+            { name: 'Bread', price: 24 },
+            { name: 'Jam', price: 33 },
+            { name: 'Butter', price: 56 },
+            { name: 'Cheese', price: 89 },
+            { name: 'Yoghurt', price: 16 },
+            { name: 'Cucumber', price: 19 },
+            { name: 'Ham', price: 29 }
+        ];
+        let shoppingCartItems = [];
+        let wallet = 150;
+        let tempMoneySpent = 0;
+        let receipt = [];
+
+        //View
+        updateView();
+        function updateView() {
+            app.innerHTML = /*HTML*/ `
+            <div class="grid">
+            <div class="shoppingList">
+                <h2>Click to add to cart</h2>
+                ${drawShoppingList()}
+                <input class="shoppingListInput" type="text"
+                onchange = "addToShoppingList(this.value)"/>
+            </div>
+                <div class="shoppingCart">
+                    <h2>Shopping cart 🛒</h2>
+                    ${drawShoppingCart()}
+                    <button onclick="buyItems()">Buy items in cart</button>
+                    </div>
+                <div class="walletAndReceipt">
+                    <h2>👛 Money used: </h2>
+                    <h3> <span class="youCanAfford"> ${tempMoneySpent}</span>/${wallet}kr</h3>
+                    
+                    <div>${receipt}</div>
+                </div>
+            </div>
+            `;
+        }
+
+        function drawShoppingList() {
+            let html = '';
+            for (let i = 0; i < shoppingListItems.length; i++) {
+                html += `<li onclick="moveToCart('${i}')">${shoppingListItems[i].name}- ${shoppingListItems[i].price}kr</li>`
+            }
+            return html;
+        }
+        function drawShoppingCart() {
+            let html = '';
+            for (let i = 0; i < shoppingCartItems.length; i++) {
+                html += `<li onclick="removeFromCart('${i}')">${shoppingCartItems[i].name}</li>`
+            }
+            return html;
+        }
+
+        function buyItems () {
+            
+            for (let i = 0; i < shoppingCartItems.length; i++) {
+                receipt += `<li>${shoppingCartItems[i].name} ${shoppingCartItems[i].price}kr</li>`
+            }
+            return receipt
+        }
+
+        //Controller
+        function addToShoppingList(newItem) {
+            shoppingListItems.push(newItem);
+            updateView();
+        }
+
+        function moveToCart(chosenItem) {
+            const itemToMove = shoppingListItems[chosenItem];
+            if(tempMoneySpent <= wallet) {
+            shoppingListItems.splice(chosenItem, 1);
+            shoppingCartItems.push(itemToMove);
+        }
+
+            manageTempMoneySpent();
+            updateView();
+        }
+
+        function removeFromCart(chosenItem) {
+            const itemToRemove = shoppingCartItems[chosenItem];
+            shoppingCartItems.splice(itemToRemove, 1);
+            manageTempMoneySpent ();
+            updateView();
+        }
+
+        function manageTempMoneySpent () {
+            let number =0;
+            
+            if (tempMoneySpent <= wallet) {
+                for (let i=0; i< shoppingCartItems.length; i++) {
+                number += shoppingCartItems[i].price;
+            }
+            tempMoneySpent = number;
+        } else {
+            tempMoneySpent = `<span class="youCantAfford"> ${tempMoneySpent}</span>`
+        }
+            updateView();
+        }
+
+    
+
+
+        // fikse input-felt 
+        // wallet
+        // reciept - uferdig
+
+        //bugs: 
+        // tallet blir ikke rødt med en gang det skal.
+
+
+        // hvordan kan jeg ta i bruk knapper her?
+        // jeg vil gjerne gjøre sånn at hvis man trykker på et eller flere items, så
+        // blir de markert, og så kan man trykke på knapper som enten fjerner de fra lista,
+        // eller legger de til i cart.
+    </script>
+
+
+</body>
+
+</html>
